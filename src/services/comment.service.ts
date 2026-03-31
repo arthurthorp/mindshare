@@ -19,4 +19,12 @@ export class CommentService {
       },
     });
   }
+
+  async listByIdea(ideaId: string) {
+    return prisma.comment.findMany({
+      where: {
+        ideaId,
+      },
+    });
+  }
 }
