@@ -15,47 +15,33 @@ import { User } from "@prisma/client";
 import { isAuth } from "../middlewares/auth.middleware";
 import { UserModel } from "../models/user.model";
 import { UserService } from "../services/user.service";
+import { CommentModel } from "../models/comment.model";
+import { CommentService } from "../services/comment.service";
+import { CreateCommentInput } from "../dtos/input/comment.input";
 
-@Resolver(() => IdeaModel)
+@Resolver(() => CommentModel)
 @UseMiddleware(isAuth)
-export class IdeaResolver {
+export class CommentResolver {
   private ideaService = new IdeaService();
   private userService = new UserService();
+  private commentService = new CommentService();
 
-  @Mutation(() => IdeaModel)
-  async createIdea(
-    @Arg("data", () => CreateIdeaInput) data: CreateIdeaInput,
+  @Mutation(() => CommentModel)
+  async createComment(
+    @Arg("data", () => CreateCommentInput) data: CreateCommentInput,
+    @Arg("ideaId", () => String) ideaId: string,
     @GqlUser() user: User,
-  ): Promise<IdeaModel> {
-    return this.ideaService.create(data, user.id);
-  }
-
-  @Mutation(() => IdeaModel)
-  async updateIdea(
-    @Arg("data", () => UpdateIdeaInput) data: UpdateIdeaInput,
-    @Arg("id", () => String) id: string,
-    @GqlUser() user: User,
-  ): Promise<IdeaModel> {
-    return this.ideaService.update(data, id, user);
-  }
-
-  @Mutation(() => Boolean)
-  async deleteIdea(
-    @Arg("id", () => String) id: string,
-    @GqlUser() user: User,
-  ): Promise<boolean> {
-    await this.ideaService.delete(id, user);
-
-    return true;
-  }
-
-  @Query(() => [IdeaModel])
-  async listIdeas(): Promise<IdeaModel[]> {
-    return this.ideaService.list();
+  ): Promise<CommentModel> {
+    return this.commentService.create(ideaId, user.id, data);
   }
 
   @FieldResolver(() => UserModel)
   async author(@Root() idea: IdeaModel): Promise<UserModel> {
     return this.userService.findById(idea.authorId);
+  }
+
+  @FieldResolver(() => IdeaModel)
+  async idea(@Root() comment: CommentModel): Promise<IdeaModel> {
+    return this.ideaService.findById(comment.ideaId);
   }
 }

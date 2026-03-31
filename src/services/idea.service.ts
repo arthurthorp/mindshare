@@ -3,7 +3,7 @@ import { prisma } from "../../prisma/prisma";
 import { CreateIdeaInput, UpdateIdeaInput } from "../dtos/input/idea.input";
 
 export class IdeaService {
-  async createIdea(data: CreateIdeaInput, authorId: string) {
+  async create(data: CreateIdeaInput, authorId: string) {
     return prisma.idea.create({
       data: {
         title: data.title,
@@ -13,7 +13,7 @@ export class IdeaService {
     });
   }
 
-  async deleteIdea(id: string, user: User) {
+  async delete(id: string, user: User) {
     const idea = await prisma.idea.findUnique({
       where: {
         id: id,
@@ -31,11 +31,19 @@ export class IdeaService {
     });
   }
 
-  async listIdeas() {
+  async list() {
     return prisma.idea.findMany();
   }
 
-  async updateIdea(data: UpdateIdeaInput, id: string, user: User) {
+  async findById(id: string) {
+    return prisma.idea.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async update(data: UpdateIdeaInput, id: string, user: User) {
     const idea = await prisma.idea.findUnique({
       where: {
         id: id,

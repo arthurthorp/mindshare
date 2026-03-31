@@ -2,7 +2,7 @@ import { prisma } from "../../prisma/prisma";
 import { CreateUserInput } from "../dtos/input/user.input";
 
 export class UserService {
-  async createUser(data: CreateUserInput) {
+  async create(data: CreateUserInput) {
     const findUser = await prisma.user.findUnique({
       where: {
         email: data.email,
@@ -19,7 +19,7 @@ export class UserService {
     });
   }
 
-  async findUser(id: string) {
+  async findById(id: string) {
     const user = await prisma.user.findUnique({
       where: { id },
     });
