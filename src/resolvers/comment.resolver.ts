@@ -36,8 +36,8 @@ export class CommentResolver {
   }
 
   @FieldResolver(() => UserModel)
-  async author(@Root() idea: IdeaModel): Promise<UserModel> {
-    return this.userService.findById(idea.authorId);
+  async author(@Root() comment: CommentModel): Promise<UserModel> {
+    return this.userService.findById(comment.authorId);
   }
 
   @FieldResolver(() => IdeaModel)
