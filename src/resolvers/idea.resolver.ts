@@ -2,6 +2,7 @@ import {
   Arg,
   FieldResolver,
   Mutation,
+  Query,
   Resolver,
   Root,
   UseMiddleware,
@@ -33,8 +34,24 @@ export class IdeaResolver {
   async updateIdea(
     @Arg("data", () => UpdateIdeaInput) data: UpdateIdeaInput,
     @Arg("id", () => String) id: string,
+    @GqlUser() user: User,
   ): Promise<IdeaModel> {
-    return this.ideaService.updateIdea(data, id);
+    return this.ideaService.updateIdea(data, id, user);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteIdea(
+    @Arg("id", () => String) id: string,
+    @GqlUser() user: User,
+  ): Promise<boolean> {
+    await this.ideaService.deleteIdea(id, user);
+
+    return true;
+  }
+
+  @Query(() => [IdeaModel])
+  async listIdeas(): Promise<IdeaModel[]> {
+    return this.ideaService.listIdeas();
   }
 
   @FieldResolver(() => UserModel)
